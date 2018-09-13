@@ -59,12 +59,12 @@ def parse_arguments():
 
     parser.add_argument('-d', '--distribution',
                         action='store',
-                        choices=distros.keys(),
+                        choices=list(distros.keys()),
                         help='Who should be able to view the event')
 
     parser.add_argument('-t', '--threat_level',
                         action='store',
-                        choices=threat_levels.keys(),
+                        choices=list(threat_levels.keys()),
                         help='The threat level of the event')
 
     return parser
@@ -116,12 +116,12 @@ def create_attribute(args, category, at_type, value, page, file_name):
 
 
 def get_option(args, options, at):
-    print("\nInclude %s %s in MISP as:\n-------------------------" % (at["type"], at["match"]))
+    print(("\nInclude %s %s in MISP as:\n-------------------------" % (at["type"], at["match"])))
     for key in sorted(options.keys()):
-        print("%d: %s" % (key, options[key]))
+        print(("%d: %s" % (key, options[key])))
 
     while True:
-        option = raw_input("Enter an option: ")
+        option = eval(input("Enter an option: "))
 
         if option in ["0", "1", "2", "3"]:
             if option == "0":
@@ -131,7 +131,7 @@ def get_option(args, options, at):
 
             return create_attribute(args, sp[0].strip(), sp[1].strip(), at["match"], at["page"], at["file"])
 
-        print("%d is not a valid option!" % option)
+        print(("%d is not a valid option!" % option))
 
 
 def create_url(args, at):
@@ -270,7 +270,7 @@ def get_misp_attributes_json(args, reports_json):
     for at in reports_json:
 
         if args.page and (int(at["page"]) < int(args.page)):
-            print("Ignored %s %s on page %s!" % (at["type"], at["match"], at["page"]))
+            print(("Ignored %s %s on page %s!" % (at["type"], at["match"], at["page"])))
             continue
 
         at_json = {}
@@ -305,7 +305,7 @@ def get_misp_attributes_json(args, reports_json):
         elif at["type"] in ["Filename", "Filepath"]:
             at_json = create_filepath(args, at)
 
-        if len(at_json.keys()) > 0:
+        if len(list(at_json.keys())) > 0:
             attributes.append(at_json)
 
     return attributes
@@ -334,7 +334,7 @@ def main():
 
     ioc_python_path = os.path.join("ioc_parser", "bin", "iocp")
 
-    print("Parsing report(s) at %s..." % args.report)
+    print(("Parsing report(s) at %s..." % args.report))
     os.system("python %s \"%s\" -d -i %s -o json > temp.json" % (ioc_python_path, args.report, args.report_format))
 
     print("Reading in results...")
@@ -345,14 +345,14 @@ def main():
     reports_json = json.loads(s)
     misp_attribute_json = get_misp_attributes_json(args, reports_json)
     misp_event_json = get_misp_event_json(args, misp_attribute_json)
-    print("Attributes found in report: %d" % len(misp_event_json["Event"]["Attribute"]))
+    print(("Attributes found in report: %d" % len(misp_event_json["Event"]["Attribute"])))
 
     with open("misp_%s.json" % args.report, "w") as f:
         f.write(json.dumps(misp_event_json, indent=4))
 
-    #r = create_misp_event(args, misp_event_json)
+    r = create_misp_event(args, misp_event_json)
 
-    print "MISP API add request response: %s" % str(r)
+    print(("MISP API add request response: %s" % str(r)))
 
 
 if __name__ == "__main__":

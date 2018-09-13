@@ -15,12 +15,10 @@ Ideally install it in a virtualenv and you will also need ioc_parser
 ```
 git clone https://github.com/SteveClement/report_to_misp.git
 cd report_to_misp
-mkvirtualenv -p python2 report_to_misp
+mkvirtualenv -p python3 report_to_misp
 git clone https://github.com/SteveClement/ioc_parser.git
 pip install -r ioc_parser/requirements.txt
 cd ioc_parser
-python setup.py build
-python setup.py install
-
+pip install .
 ```
 
