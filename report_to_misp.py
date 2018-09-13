@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 __author__ = 'wartortell'
 
 import os
@@ -331,7 +332,7 @@ def main():
 
     args = parser.parse_args()
 
-    ioc_python_path = os.path.join("ioc_parser", "iocp.py")
+    ioc_python_path = os.path.join("ioc_parser", "bin", "iocp")
 
     print("Parsing report(s) at %s..." % args.report)
     os.system("python %s \"%s\" -d -i %s -o json > temp.json" % (ioc_python_path, args.report, args.report_format))
